@@ -3,39 +3,38 @@ using System.Net;
 
 namespace Fusion.DSL;
 
-public class AtomicAssembler
+public class AtomicAssembler(AtomicProjectFile project)
 {
-    public static void Use(AtomicParser parser)
-    {
-        string headers = string.Join(" ", parser.Includes);
-        string sources = string.Join(" ", parser.Sources);
-        string libs = string.Join(" ", parser.Libs);
+    string Headers { get; } = project.GetString(project.Includes);
+    string Sources { get; } = project.GetString(project.Sources);
+    string Libs { get; } = project.GetString(project.Libs);
 
-        if (sources.Length == 0)
+    public void Use()
+    {
+        Console.WriteLine(Sources);
+        if (project.Sources.Count == 0)
         {
             throw new Exception("no input files...");
         }
 
         List<string> command = [
-            $"{parser.OutBinary}{(parser.IsLibrary
+            $"{project.OutBinary}{(project.IsLibrary
                 ? OS.LibraryEXT : OS.ExecutableEXT)}",
-            sources,
-            parser.Library,
-            parser.LangVersion ?? ""
+            Sources,
+            project.Library,
+            project.LangVersion ?? "",
+            ..GetCommand()
         ];
 
-        if (!string.IsNullOrWhiteSpace(libs)) command.Add(libs);
-        if (!string.IsNullOrWhiteSpace(headers)) command.Add(headers);
-
-        if (parser.IsLibrary)
+        if (project.IsLibrary)
         {
-            CompileStatic(parser);
+            CompileStatic();
             return;
         }
 
-        Console.WriteLine(parser.ClangBinary);
+        Console.WriteLine(project.ClangBinary);
 
-        StartProc(parser.ClangBinary, command);
+        StartProc(project.ClangBinary, command);
     }
 
     public static void StartProc(string binary, List<string> command)
@@ -55,28 +54,31 @@ public class AtomicAssembler
         proc.WaitForExit();
     }
 
-    public static void CompileStatic(AtomicParser parser)
+    public List<string> GetCommand()
+    {
+        List<string> command = [];
+        if (!string.IsNullOrWhiteSpace(Libs)) command.Add(Libs);
+        if (!string.IsNullOrWhiteSpace(Headers)) command.Add(Headers);
+        return command;
+    }
+
+    public void CompileStatic()
     {
         List<string> objects = [];
-        foreach (string source in parser.Sources)
+        foreach (string source in project.Sources)
         {
-            string headers = string.Join(" ", parser.Includes);
-            string libs = string.Join(" ", parser.Libs);
-            List<string> command = [];
-            if (!string.IsNullOrWhiteSpace(libs)) command.Add(libs);
-            if (!string.IsNullOrWhiteSpace(headers)) command.Add(headers);
 
-            string objectFile = 
+            string objectFile =
                 $"{Program.ObjOutput}/{Path.GetFileNameWithoutExtension(source)}{OS.StaticLibObject}";
             objects.Add(objectFile);
 
-            StartProc(parser.ClangBinary, [
+            StartProc(project.ClangBinary, [
                 "-c",
                 source,
                 $"-o {objectFile}",
-                ..command
+                ..GetCommand()
             ]);
-            Console.WriteLine($"Compiled {source} -> {objectFile}");
+            Console.WriteLine($"\x1B[34mCompiled {source} -> {objectFile}\x1B[0m");
         }
 
         List<string> arguments = [];
@@ -84,19 +86,23 @@ public class AtomicAssembler
 
         if (OS.IsUnix())
         {
-            binary = "llvm-ar";
+            binary = "ar";
             arguments.Add("rcs");
-            arguments.Add($"/OUT:{Program.BinaryOutput}/{Path.GetFileNameWithoutExtension(parser.OutBinary)}.a");
-        } else if (OperatingSystem.IsWindows())
+            arguments.Add(
+                $"{Program.BinaryOutput}/{Path.GetFileNameWithoutExtension(project.OutBinary)}.a");
+        }
+        else if (OperatingSystem.IsWindows())
         {
             binary = Clang.LibEXE;
-            arguments.Add($"/OUT:{Program.BinaryOutput}/{Path.GetFileNameWithoutExtension(parser.OutBinary)}.lib");
+            arguments.Add(
+                $"/OUT:{Program.BinaryOutput}/{Path.GetFileNameWithoutExtension(project.OutBinary)}.lib");
         }
 
         StartProc(binary, [
             ..arguments,
             ..objects
         ]);
-        Console.WriteLine($"Compiled library archive in {Program.BinaryOutput}");
+        Console.WriteLine(
+            $"Compiled library archive in \x1B[32m{Program.BinaryOutput}\x1B[0m");
     }
 }
