@@ -23,8 +23,9 @@ public class Program
                 List<string>? atomicFiles = SearchDir(folderPath);
                 // Load each .atomic file
                 atomicFiles?.ForEach(file => {
-                    List<AtomicMap> maps = AtomicLexer.Use(
-                        File.ReadAllText(file).ToCharArray());
+                    List<AtomicMap> maps = new AtomicLexer(
+                        File.ReadAllText(file).ToCharArray()
+                    ).Use();
 
                     ReadonlyAtomicResult res = new AtomicParser(maps, 
                         $"{Path.GetDirectoryName(file.TrimEnd(Path.DirectorySeparatorChar))}/" 
@@ -32,7 +33,7 @@ public class Program
                         .Use();
                     if (res.Status == AtomicStatus.ERROR)
                     {
-                        throw new Exception(res.Message);
+                        throw new Exception($"\x1B[31m{res.Message}\x1B[0m");
                     }
                 });
             });

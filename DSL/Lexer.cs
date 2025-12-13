@@ -23,21 +23,23 @@ public class AtomicMaps
     ];
 }
 
-public class AtomicLexer
+public class AtomicLexer(char[] file)
 {
-    public static List<AtomicMap> Use(char[] file)
+    private static int Index { get; set; } = 0;
+
+    public List<AtomicMap> Use()
     {
         List<AtomicMap> maps = [];
         StringBuilder word = new();
-        for (int i = 0; i < file.Length; i++)
+        for (; Index < file.Length; Index++)
         {
-            if (file[i] != '"' && file[i] != '(' && file[i] != ')')
+            if (Current() != '"' && Current() != '(' && Current() != ')')
             {
-                word.Append(file[i]);
+                word.Append(Current());
             }
-            if (file[i] == '"') maps.Add(new AtomicMap(file[i].ToString(), "QUOTE"));
-            if (file[i] == '(') maps.Add(new AtomicMap(file[i].ToString(), "ARRAY_START"));
-            if (file[i] == ')') maps.Add(new AtomicMap(file[i].ToString(), "ARRAY_END"));
+            if (Current() == '"') maps.Add(new AtomicMap(CurrentAsString(), "QUOTE"));
+            if (Current() == '(') maps.Add(new AtomicMap(CurrentAsString(), "ARRAY_START"));
+            if (Current() == ')') maps.Add(new AtomicMap(CurrentAsString(), "ARRAY_END"));
 
             foreach (AtomicMap map in AtomicMaps.Tokens)
             {
@@ -48,35 +50,39 @@ public class AtomicLexer
                     break;
                 }
             }
-            if (file[i] == '"')
+            if (Current() == '"')
             {
-                i++;
+                Next();
                 StringBuilder stringLine = new();
 
-                for (int w = 0 + i; w < file.Length; w++)
+                for (int w = 0 + Index; w < file.Length; w++)
                 {
                     if (file[w] == '"')
                     {
                         maps.Add(new AtomicMap(stringLine.ToString(), "STRING"));
-                        maps.Add(new AtomicMap(file[i].ToString(), "QUOTE"));
+                        maps.Add(new AtomicMap(CurrentAsString(), "QUOTE"));
                         break;
                     }
-                    i++;
+                    Next();
                     stringLine.Append(file[w]);
                 }
             }
-            if (file[i] == '(')
+            if (Current() == '(')
             {
-                i++;
+                Next();
                 StringBuilder stringLine = new();
 
-                for (int w = 0 + i; w < file.Length; w++)
+                for (int NextIndex = 0 + Index; NextIndex < file.Length; NextIndex++)
                 {
-                    if (file[w] != ' ' && !string.IsNullOrWhiteSpace(file[w].ToString()))
+                    char C()
                     {
-                        stringLine.Append(file[w]);
+                        return file[NextIndex];
                     }
-                    if (file[w] == '\n')
+                    if (C() != ' ' && !string.IsNullOrWhiteSpace(C().ToString()))
+                    {
+                        stringLine.Append(C());
+                    }
+                    if (C() == '\n')
                     {
                         if (!string.IsNullOrWhiteSpace(stringLine.ToString()))
                         {
@@ -84,15 +90,30 @@ public class AtomicLexer
                         }
                         stringLine.Clear();
                         continue;
-                    } else if (file[w] == ')')
+                    } else if (C() == ')')
                     {
                         break;
                     }
-                    i++;
+                    Next();
                 }
             }
-            if (char.IsWhiteSpace(file[i])) word.Clear(); 
+            if (char.IsWhiteSpace(Current())) word.Clear(); 
         }
         return maps;
+    }
+
+    private static void Next()
+    {
+        Index++;
+    }
+
+    private char Current()
+    {
+        return file[Index];
+    }
+
+    public string CurrentAsString()
+    {
+        return file[Index].ToString();
     }
 }
