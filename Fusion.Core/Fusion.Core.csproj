@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API\Fusion.API.csproj" />
-    <ProjectReference Include="..\DSL\Fusion.DSL.csproj" />
+    <ProjectReference Include="..\Fusion.API\Fusion.API.csproj" />
+    <ProjectReference Include="..\Fusion.DSL\Fusion.DSL.csproj" />
   </ItemGroup>
 
 </Project>

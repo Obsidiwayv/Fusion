@@ -1,5 +1,6 @@
-namespace Fusion.DSL.Elements;
 using Fusion.API;
+
+namespace Fusion.DSL.Elements;
 
 public class AtomicFlags
 {

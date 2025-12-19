@@ -1,7 +1,7 @@
 using Fusion.DSL.Elements;
+using Fusion.API;
 
 namespace Fusion.DSL;
-using Fusion.API;
 
 public class AtomicParser(List<AtomicMap> atomicMaps, string project)
 {

@@ -1,7 +1,7 @@
 ﻿using Fusion.DSL;
+using Fusion.API;
 
 namespace Fusion.Core;
-using Fusion.API;
 
 public class Program
 {
