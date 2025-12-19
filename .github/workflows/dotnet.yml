@@ -24,6 +24,9 @@ jobs:
     - name: Publish to nuget.org
       env:
         API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: dotnet nuget push ./fusion-nupkg/*.nupkg \
-           --source https://api.nuget.org/v3/index.json \
-           --api-key ${{ env.API_KEY }}
+      run: |
+          Get-ChildItem ./fusion-nupkg/ -Filter *.nupkg | ForEach-Object {
+            dotnet nuget push $_.FullName `
+              --api-key "${{ env.API_KEY }}" `
+              --source https://api.nuget.org/v3/index.json
+          }
