@@ -42,4 +42,12 @@ put_assets (
     img/1.png
     img/2.png
 )
+put_flags (
+    win32 {
+        -Wl,/SUBSYSTEM,Win32
+    }
+    darwin {
+        -flags
+    }
+)
 ```

@@ -1,13 +1,15 @@
 using System.Diagnostics;
-using System.Net;
+using Fusion.API;
 
 namespace Fusion.DSL;
 
 public class AtomicAssembler(AtomicProjectFile project)
 {
-    string Headers { get; } = project.GetString(project.Includes);
-    string Sources { get; } = project.GetString(project.Sources);
-    string Libs { get; } = project.GetString(project.Libs);
+    string Headers { get; } = AtomicProjectFile.GetString(project.Includes);
+    string Sources { get; } = AtomicProjectFile.GetString(project.Sources);
+    string Libs { get; } = AtomicProjectFile.GetString(project.Libs);
+
+    string Flags { get; } = AtomicProjectFile.GetString(project.Flags);
 
     public void Use()
     {
@@ -23,7 +25,7 @@ public class AtomicAssembler(AtomicProjectFile project)
             Sources,
             project.Library,
             project.LangVersion ?? "",
-            ..GetCommand()
+            ..GetCommand(hasFlag: true)
         ];
 
         if (project.IsLibrary)
@@ -54,11 +56,12 @@ public class AtomicAssembler(AtomicProjectFile project)
         proc.WaitForExit();
     }
 
-    public List<string> GetCommand()
+    public List<string> GetCommand(bool hasFlag)
     {
         List<string> command = [];
         if (!string.IsNullOrWhiteSpace(Libs)) command.Add(Libs);
         if (!string.IsNullOrWhiteSpace(Headers)) command.Add(Headers);
+        if (!string.IsNullOrWhiteSpace(Flags) && hasFlag) command.Add(Flags);
         return command;
     }
 
@@ -69,14 +72,14 @@ public class AtomicAssembler(AtomicProjectFile project)
         {
 
             string objectFile =
-                $"{Program.ObjOutput}/{Path.GetFileNameWithoutExtension(source)}{OS.StaticLibObject}";
+                $"{AtomicFolders.ObjOutput}/{Path.GetFileNameWithoutExtension(source)}{OS.StaticLibObject}";
             objects.Add(objectFile);
 
             StartProc(project.ClangBinary, [
                 "-c",
                 source,
                 $"-o {objectFile}",
-                ..GetCommand()
+                ..GetCommand(hasFlag: false)
             ]);
             Console.WriteLine($"\x1B[34mCompiled {source} -> {objectFile}\x1B[0m");
         }
@@ -89,13 +92,13 @@ public class AtomicAssembler(AtomicProjectFile project)
             binary = "ar";
             arguments.Add("rcs");
             arguments.Add(
-                $"{Program.BinaryOutput}/{Path.GetFileNameWithoutExtension(project.OutBinary)}.a");
+                $"{AtomicFolders.BinaryOutput}/{Path.GetFileNameWithoutExtension(project.OutBinary)}.a");
         }
         else if (OperatingSystem.IsWindows())
         {
             binary = Clang.LibEXE;
             arguments.Add(
-                $"/OUT:{Program.BinaryOutput}/{Path.GetFileNameWithoutExtension(project.OutBinary)}.lib");
+                $"/OUT:{AtomicFolders.BinaryOutput}/{Path.GetFileNameWithoutExtension(project.OutBinary)}.lib");
         }
 
         StartProc(binary, [
@@ -103,6 +106,6 @@ public class AtomicAssembler(AtomicProjectFile project)
             ..objects
         ]);
         Console.WriteLine(
-            $"Compiled library archive in \x1B[32m{Program.BinaryOutput}\x1B[0m");
+            $"Compiled library archive in \x1B[32m{AtomicFolders.BinaryOutput}\x1B[0m");
     }
 }

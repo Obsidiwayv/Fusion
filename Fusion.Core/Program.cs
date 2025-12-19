@@ -1,18 +1,16 @@
 ﻿using Fusion.DSL;
 
-namespace Fusion;
+namespace Fusion.Core;
+using Fusion.API;
 
 public class Program
 {
-    public static string BinaryOutput { get; } = "Bin";
-    public static string BuildOutput { get; } = $"{BinaryOutput}/Build";
-    public static string ObjOutput { get; } = $"{BinaryOutput}/obj";
 
     public static void Main(string[] args)
     {
-        VerifyDir(BinaryOutput);
-        VerifyDir(BuildOutput);
-        VerifyDir(ObjOutput);
+        VerifyDir(AtomicFolders.BinaryOutput);
+        VerifyDir(AtomicFolders.BuildOutput);
+        VerifyDir(AtomicFolders.ObjOutput);
 
         File.ReadAllLines("DIRS")
             .ToList()
@@ -37,7 +35,7 @@ public class Program
                     }
                 });
             });
-        Directory.Delete(ObjOutput, true);
+        Directory.Delete(AtomicFolders.ObjOutput, true);
     }
 
     public static void VerifyDir(string directory)

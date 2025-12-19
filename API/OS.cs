@@ -1,4 +1,4 @@
-namespace Fusion;
+namespace Fusion.API;
 
 public enum HostOS
 {
@@ -13,19 +13,19 @@ public class OS
     public static string ExecutableEXT { get; } = OperatingSystem.IsWindows()
         ? ".exe"
         : "";
-    
+
     public static string LibraryEXT { get; } = OperatingSystem.IsWindows()
         ? ".dll"
-        : OperatingSystem.IsMacOS() 
-        ? ".dylib" 
+        : OperatingSystem.IsMacOS()
+        ? ".dylib"
         : ".so";
 
-    public static string StaticLibraryEXT { get; } = OperatingSystem.IsWindows() 
+    public static string StaticLibraryEXT { get; } = OperatingSystem.IsWindows()
         ? ".lib" : ".a";
 
     public static string StaticLibObject { get; } = OperatingSystem.IsWindows()
         ? ".obj" : ".o";
-    
+
     public static bool IsUnix()
     {
         return OperatingSystem.IsLinux() || OperatingSystem.IsMacOS();
@@ -46,6 +46,13 @@ public class OS
         HostOS.Linux => "Linux",
         _ => "Unknown"
     };
+}
+
+public class AtomicFolders
+{
+    public static string BinaryOutput { get; } = "Bin";
+    public static string BuildOutput { get; } = $"{BinaryOutput}/Build";
+    public static string ObjOutput { get; } = $"{BinaryOutput}/obj";
 }
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]

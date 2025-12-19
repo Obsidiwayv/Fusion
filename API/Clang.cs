@@ -1,4 +1,4 @@
-namespace Fusion;
+namespace Fusion.API;
 
 public class Clang
 {

@@ -11,8 +11,9 @@ public class AtomicProjectFile
     public List<string> Includes { get; } = [];
     public List<string> Sources { get; } = [];
     public List<string> Libs { get; } = [];
+    public List<string> Flags { get; } = [];
 
-    public string GetString(List<string> strings)
+    public static string GetString(List<string> strings)
     {
         return string.Join(" ", strings);
     }

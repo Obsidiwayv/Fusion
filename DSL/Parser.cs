@@ -1,4 +1,7 @@
+using Fusion.DSL.Elements;
+
 namespace Fusion.DSL;
+using Fusion.API;
 
 public class AtomicParser(List<AtomicMap> atomicMaps, string project)
 {
@@ -25,7 +28,8 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
                         if (key.StartsWith(Root))
                         {
                             ProjectFile.Includes.Add($"-I{key.Replace(Root, "")}");
-                        } else
+                        }
+                        else
                         {
                             ProjectFile.Includes.Add($"-I{project}{key}");
                         }
@@ -77,7 +81,7 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
                             return;
                         }
                         File.Copy(key,
-                            $"{Program.BuildOutput}/{Path.GetFileName(key)}",
+                            $"{AtomicFolders.BuildOutput}/{Path.GetFileName(key)}",
                             true);
                     });
                 }
@@ -85,7 +89,7 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
                 {
                     ParseString((key) =>
                     {
-                        ProjectFile.OutBinary = $"-o {Program.BuildOutput}/{key}";
+                        ProjectFile.OutBinary = $"-o {AtomicFolders.BuildOutput}/{key}";
                     });
                 }
                 if (map.Value == "VER")
@@ -108,10 +112,12 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
                             if (OperatingSystem.IsMacOS())
                             {
                                 ProjectFile.Library = "-dynamiclib";
-                            } else
+                            }
+                            else
                             {
                                 ProjectFile.Library = "-shared";
-                            };
+                            }
+                            ;
                         }
                         else if (key != "static")
                         {
@@ -147,25 +153,50 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
                                     return;
                                 }
                                 ProjectFile.ClangBinary = Clang.CPlusPlusBinary;
-                            } else
+                            }
+                            else
                             {
                                 result.Invalidate("Invalid language");
                                 return;
                             }
                             ProjectFile.LangVersion = $"--std={str}";
-                        } else
+                        }
+                        else
                         {
                             if (key == "c")
                             {
                                 ProjectFile.ClangBinary = Clang.Binary;
-                            } else if (key == "c++")
+                            }
+                            else if (key == "c++")
                             {
                                 ProjectFile.ClangBinary = Clang.CPlusPlusBinary;
-                            } else
+                            }
+                            else
                             {
                                 result.Invalidate("Invalid language");
                                 return;
                             }
+                        }
+                    });
+                }
+                if (map.Value == "FLAGS")
+                {
+                    AtomicFlags flags = new();
+                    ParseArrayElements((key) =>
+                    {
+                        flags.IsCurrent(key);
+
+                        if (flags.IsWindows())
+                        {
+                            ProjectFile.Flags.Add(key);
+                        }
+                        if (flags.IsDarwin())
+                        {
+                            ProjectFile.Flags.Add(key);
+                        }
+                        if (flags.IsLinux())
+                        {
+                            ProjectFile.Flags.Add(key);
                         }
                     });
                 }

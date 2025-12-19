@@ -20,6 +20,7 @@ public class AtomicMaps
         new AtomicMap("add_sources", "SRCS"),
         new AtomicMap("add_libs", "LIBS"),
         new AtomicMap("put_assets", "ASSETS"),
+        new AtomicMap("put_flags", "FLAGS")
     ];
 }
 

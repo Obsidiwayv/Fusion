@@ -1,4 +1,4 @@
-namespace Fusion.DSL;
+namespace Fusion.API;
 
 public enum AtomicStatus
 {
