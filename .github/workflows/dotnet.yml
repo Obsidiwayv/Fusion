@@ -26,7 +26,7 @@ jobs:
       run:  dotnet pack ./API/Fusion.API.csproj -c Release -o ./fusion-nupkg
     - name: Publish
       env:
-        API_KEY: ${{ NUGET_API_KEY }}
+        API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: dotnet nuget push ./fusion-nupkg/*.nupkg \
              --source https://api.nuget.org/v3/index.json \
              --api-key $NUGET_API_KEY
