@@ -28,5 +28,4 @@ jobs:
           Get-ChildItem ./fusion-nupkg/ -Filter *.nupkg | ForEach-Object {
             dotnet nuget push $_.FullName `
               --api-key "${{ env.API_KEY }}" `
-              --source https://api.nuget.org/v3/index.json
           }
