@@ -23,7 +23,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run:  dotnet pack ./API/Fusion.API.csproj -c Release -o ./fusion-nupkg
-    - name: Publish
+    - name: Publish to nuget.org
       env:
         API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: dotnet nuget push ./fusion-nupkg/*.nupkg \
