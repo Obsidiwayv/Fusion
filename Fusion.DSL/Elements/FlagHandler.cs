@@ -32,7 +32,7 @@ public class AtomicFlags
         }
         else
         {
-            // If the Continue prop is false then assign true so we dont accidently 
+            // If the Continue prop is false then assign true so we dont accidentlly 
             // parse the beginning bracket
             if (!Continue) Continue = true;
         }
