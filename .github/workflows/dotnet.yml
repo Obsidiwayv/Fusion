@@ -1,0 +1,32 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run:  dotnet pack ./API/Fusion.API.csproj -c Release -o ./fusion-nupkg
+    - name: Publish
+      env:
+        API_KEY: ${{ NUGET_API_KEY }}
+        run: dotnet nuget push ./fusion-nupkg/*.nupkg \
+             --source https://api.nuget.org/v3/index.json \
+             --api-key $NUGET_API_KEY
