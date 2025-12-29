@@ -7,6 +7,7 @@ public enum AtomicStatus
     WAITING = 0x0004
 }
 
+
 /// <seealso cref="GenericAtomicResult{T}"/>
 /// <summary>
 /// Creates a result based class for waiting or erroring using an

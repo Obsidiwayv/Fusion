@@ -13,7 +13,7 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
 
     private string Root { get; } = "root://";
 
-    public ReadonlyAtomicResult Use()
+    public ReadonlyAtomicResult Use(bool UseAssembler)
     {
         try
         {
@@ -206,7 +206,8 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
         {
             result.Invalidate(e.Message);
         }
-        new AtomicAssembler(ProjectFile).Use();
+        if (UseAssembler) new AtomicAssembler(ProjectFile).Use();
+
         return result.Lock();
     }
 

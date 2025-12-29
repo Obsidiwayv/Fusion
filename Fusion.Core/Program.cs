@@ -1,5 +1,6 @@
 ﻿using Fusion.DSL;
 using Fusion.API;
+using System.Xml;
 
 namespace Fusion.Core;
 
@@ -12,44 +13,37 @@ public class Program
         VerifyDir(AtomicFolders.BuildOutput);
         VerifyDir(AtomicFolders.ObjOutput);
 
-        File.ReadAllLines("DIRS")
-            .ToList()
-            // Read each folder path
-            .ForEach(folderPath =>
-            {
-                // Read multiple .atomic files
-                List<string>? atomicFiles = SearchDir(folderPath);
-                // Load each .atomic file
-                atomicFiles?.ForEach(file => {
-                    List<AtomicMap> maps = new AtomicLexer(
-                        File.ReadAllText(file).ToCharArray()
-                    ).Use();
+        if (File.Exists(FusionConstants.DeveloperXML))
+        {
+            XmlDocument xml = new();
+            xml.Load(FusionConstants.DeveloperXML);
+            XmlNodeList devOptionNodes = xml.GetElementsByTagName("BuildOption");
 
-                    ReadonlyAtomicResult res = new AtomicParser(maps, 
-                        $"{Path.GetDirectoryName(file.TrimEnd(Path.DirectorySeparatorChar))}/" 
-                        ?? "")
-                        .Use();
-                    if (res.Status == AtomicStatus.ERROR)
-                    {
-                        throw new Exception($"\x1B[31m{res.Message}\x1B[0m");
-                    }
-                });
-            });
+            foreach (XmlNode node in devOptionNodes)
+            {
+                string optionName = node.InnerText;
+                if (optionName == "CompileDatabase")
+                {
+                    GenerateDatabaseEnabled = true;
+                }
+            }
+        }
+
+        FusionSteps.Run((file) =>
+        {
+            List<AtomicMap> maps = new AtomicLexer(
+                File.ReadAllText(file).ToCharArray()).Use();
+
+            return new AtomicParser(maps,
+                $"{Path.GetDirectoryName(file.TrimEnd(Path.DirectorySeparatorChar))}/" ?? "")
+                .Use(true);
+        });
         Directory.Delete(AtomicFolders.ObjOutput, true);
     }
 
     public static void VerifyDir(string directory)
     {
         if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
-    }
-
-    public static List<string>? SearchDir(string directory)
-    {
-        IEnumerable<string> atomics = Directory.EnumerateFiles(
-            directory, "*.atomic", SearchOption.AllDirectories);
-
-        if (!atomics.Any()) return null;
-        return [.. atomics];
     }
 
     public static string GetProjectName(string file)
