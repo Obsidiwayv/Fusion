@@ -3,7 +3,7 @@ using Fusion.API;
 
 namespace Fusion.DSL;
 
-public class AtomicParser(List<AtomicMap> atomicMaps, string project)
+public class AtomicParser(List<AtomicMap> atomicMaps, string project, AtomicContext context)
 {
     public AtomicProjectFile ProjectFile { get; } = new();
 
@@ -206,7 +206,7 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project)
         {
             result.Invalidate(e.Message);
         }
-        if (UseAssembler) new AtomicAssembler(ProjectFile).Use();
+        if (UseAssembler) new AtomicAssembler(ProjectFile, context).Use();
 
         return result.Lock();
     }

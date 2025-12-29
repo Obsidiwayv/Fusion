@@ -24,7 +24,7 @@ public class AtomicMaps
     ];
 }
 
-public class AtomicLexer(char[] file)
+public class AtomicLexer(char[] file, AtomicContext context)
 {
     private static int Index { get; set; } = 0;
 

@@ -3,7 +3,7 @@ using Fusion.API;
 
 namespace Fusion.DSL;
 
-public class AtomicAssembler(AtomicProjectFile project)
+public class AtomicAssembler(AtomicProjectFile project, AtomicContext context)
 {
     string Headers { get; } = AtomicProjectFile.GetString(project.Includes);
     string Sources { get; } = AtomicProjectFile.GetString(project.Sources);

@@ -13,6 +13,8 @@ public class Program
         VerifyDir(AtomicFolders.BuildOutput);
         VerifyDir(AtomicFolders.ObjOutput);
 
+        var xmlOptions = new XMLOptions();
+
         if (File.Exists(FusionConstants.DeveloperXML))
         {
             XmlDocument xml = new();
@@ -24,19 +26,20 @@ public class Program
                 string optionName = node.InnerText;
                 if (optionName == "CompileDatabase")
                 {
-                    GenerateDatabaseEnabled = true;
+                    xmlOptions.GenerateCompileDatabase = true;
                 }
             }
         }
 
+        var context = new AtomicContext
+        {
+            BuildOptions = xmlOptions
+        };
+
         FusionSteps.Run((file) =>
         {
-            List<AtomicMap> maps = new AtomicLexer(
-                File.ReadAllText(file).ToCharArray()).Use();
-
-            return new AtomicParser(maps,
-                $"{Path.GetDirectoryName(file.TrimEnd(Path.DirectorySeparatorChar))}/" ?? "")
-                .Use(true);
+            List<AtomicMap> maps = context.UseLexer(file);
+            return context.UseParser(maps, file);
         });
         Directory.Delete(AtomicFolders.ObjOutput, true);
     }
