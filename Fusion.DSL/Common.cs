@@ -7,6 +7,11 @@ public class XMLOptions
     public bool? GenerateCompileDatabase { get; set; }
 }
 
+/// <summary>
+/// Class used for defining multiple atomic map lists in the project
+/// </summary>
+public class AtomicMapList : List<AtomicMap> {}
+
 public class AtomicContext
 {
     public required XMLOptions BuildOptions { get; init; }
@@ -18,13 +23,13 @@ public class AtomicContext
         database = new(this);
     }
 
-    public List<AtomicMap> UseLexer(string file)
+    public AtomicMapList UseLexer(string file)
     {
         return new AtomicLexer(
             File.ReadAllText(file).ToCharArray(), this).Use();
     }
 
-    public ReadonlyAtomicResult UseParser(List<AtomicMap> maps, string file)
+    public ReadonlyAtomicResult UseParser(AtomicMapList maps, string file)
     {
         return new AtomicParser(maps,
                 $"{Path.GetDirectoryName(file.TrimEnd(Path.DirectorySeparatorChar))}/" ?? "", this)

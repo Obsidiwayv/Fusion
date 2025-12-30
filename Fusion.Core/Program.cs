@@ -41,7 +41,7 @@ public class Program
 
         FusionSteps.Run((file) =>
         {
-            List<AtomicMap> maps = context.UseLexer(file);
+            AtomicMapList maps = context.UseLexer(file);
             return context.UseParser(maps, file);
         });
 

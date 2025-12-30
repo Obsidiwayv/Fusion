@@ -3,7 +3,7 @@ using Fusion.API;
 
 namespace Fusion.DSL;
 
-public class AtomicParser(List<AtomicMap> atomicMaps, string project, AtomicContext context)
+public class AtomicParser(AtomicMapList atomicMaps, string project, AtomicContext context)
 {
     public AtomicProjectFile ProjectFile { get; } = new();
 

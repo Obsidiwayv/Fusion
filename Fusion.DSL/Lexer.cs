@@ -28,9 +28,9 @@ public class AtomicLexer(char[] file, AtomicContext context)
 {
     private static int Index { get; set; } = 0;
 
-    public List<AtomicMap> Use()
+    public AtomicMapList Use()
     {
-        List<AtomicMap> maps = [];
+        AtomicMapList maps = [];
         StringBuilder word = new();
         for (; Index < file.Length; Index++)
         {
