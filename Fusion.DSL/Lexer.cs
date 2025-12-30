@@ -10,7 +10,7 @@ public class AtomicMap(string key, string value)
 
 public class AtomicMaps
 {
-    public static List<AtomicMap> Tokens { get; } = [
+    public static AtomicMapList Tokens { get; } = [
         new AtomicMap("binary", "BIN"),
         new AtomicMap("version", "VER"),
         new AtomicMap("uses", "USE_VER"),
