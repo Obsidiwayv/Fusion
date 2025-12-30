@@ -19,14 +19,17 @@ public class Program
         {
             XmlDocument xml = new();
             xml.Load(FusionConstants.DeveloperXML);
-            XmlNodeList devOptionNodes = xml.GetElementsByTagName("BuildOption");
+            XmlNodeList? nodes = xml.SelectNodes("/BuildOptions/Option");
 
-            foreach (XmlNode node in devOptionNodes)
+            if (nodes != null)
             {
-                string optionName = node.InnerText;
-                if (optionName == "CompileDatabase")
+                foreach (XmlNode node in nodes)
                 {
-                    xmlOptions.GenerateCompileDatabase = true;
+                    string optionName = node.InnerText;
+                    if (optionName == "CompileDatabase")
+                    {
+                        xmlOptions.GenerateCompileDatabase = true;
+                    }
                 }
             }
         }
@@ -41,6 +44,9 @@ public class Program
             List<AtomicMap> maps = context.UseLexer(file);
             return context.UseParser(maps, file);
         });
+
+        // This will only write the json file if the xml option is enabled
+        context.database.Write();
         Directory.Delete(AtomicFolders.ObjOutput, true);
     }
 

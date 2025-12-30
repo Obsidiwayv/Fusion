@@ -19,19 +19,36 @@ public class AtomicAssembler(AtomicProjectFile project, AtomicContext context)
             throw new Exception("no input files...");
         }
 
+        string outputBinary = $"{project.OutBinary}{(project.IsLibrary
+                ? OS.LibraryEXT : OS.ExecutableEXT)}";
+
         List<string> command = [
-            $"{project.OutBinary}{(project.IsLibrary
-                ? OS.LibraryEXT : OS.ExecutableEXT)}",
+            project.LangVersion ?? "",
+            ..GetCommand(hasFlag: true),
+            outputBinary,
             Sources,
             project.Library,
-            project.LangVersion ?? "",
-            ..GetCommand(hasFlag: true)
         ];
 
         if (project.IsLibrary)
         {
             CompileStatic();
             return;
+        }
+
+        foreach (var source in project.Sources)
+        {
+            string[] commandWithClang = [
+                project.ClangBinary,
+                ..command
+            ];
+            context.database.PushJSON(
+                new()
+                {
+                    Command = string.Join(" ", commandWithClang),
+                    File = source
+                }
+            );
         }
 
         Console.WriteLine(project.ClangBinary);
@@ -59,9 +76,9 @@ public class AtomicAssembler(AtomicProjectFile project, AtomicContext context)
     public List<string> GetCommand(bool hasFlag)
     {
         List<string> command = [];
+        if (!string.IsNullOrWhiteSpace(Flags) && hasFlag) command.Add(Flags);
         if (!string.IsNullOrWhiteSpace(Libs)) command.Add(Libs);
         if (!string.IsNullOrWhiteSpace(Headers)) command.Add(Headers);
-        if (!string.IsNullOrWhiteSpace(Flags) && hasFlag) command.Add(Flags);
         return command;
     }
 
@@ -70,17 +87,28 @@ public class AtomicAssembler(AtomicProjectFile project, AtomicContext context)
         List<string> objects = [];
         foreach (string source in project.Sources)
         {
-
             string objectFile =
                 $"{AtomicFolders.ObjOutput}/{Path.GetFileNameWithoutExtension(source)}{OS.StaticLibObject}";
-            objects.Add(objectFile);
-
-            StartProc(project.ClangBinary, [
+            List<string> command = [
+                ..GetCommand(hasFlag: false),
                 "-c",
                 source,
                 $"-o {objectFile}",
-                ..GetCommand(hasFlag: false)
-            ]);
+            ];
+            string[] commandWithClang = [
+                project.ClangBinary,
+                ..command
+            ];
+            context.database.PushJSON(
+                new()
+                {
+                    Command = string.Join(" ", commandWithClang),
+                    File = source
+                }
+            );
+            objects.Add(objectFile);
+
+            StartProc(project.ClangBinary, command);
             Console.WriteLine($"\x1B[34mCompiled {source} -> {objectFile}\x1B[0m");
         }
 

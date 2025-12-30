@@ -39,6 +39,7 @@ public class AtomicParser(List<AtomicMap> atomicMaps, string project, AtomicCont
                 {
                     ParseArrayElements((key) =>
                     {
+                        Console.WriteLine(key);
                         ProjectFile.Sources.Add($"{project}{key}");
                     });
                 }

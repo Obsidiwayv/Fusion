@@ -100,6 +100,7 @@ public class AtomicLexer(char[] file, AtomicContext context)
             }
             if (char.IsWhiteSpace(Current())) word.Clear(); 
         }
+        Index = 0;
         return maps;
     }
 

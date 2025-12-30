@@ -11,6 +11,13 @@ public class AtomicContext
 {
     public required XMLOptions BuildOptions { get; init; }
 
+    public AtomicCompileDatabase database;
+
+    public AtomicContext()
+    {
+        database = new(this);
+    }
+
     public List<AtomicMap> UseLexer(string file)
     {
         return new AtomicLexer(
