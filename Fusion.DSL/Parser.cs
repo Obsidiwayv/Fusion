@@ -11,8 +11,6 @@ public class AtomicParser(AtomicMapList atomicMaps, string project, AtomicContex
 
     private readonly AtomicResult result = new(AtomicStatus.WAITING, null);
 
-    private string Root { get; } = "root://";
-
     public ReadonlyAtomicResult Use(bool UseAssembler)
     {
         try
@@ -25,9 +23,10 @@ public class AtomicParser(AtomicMapList atomicMaps, string project, AtomicContex
                 {
                     ParseArrayElements((key) =>
                     {
-                        if (key.StartsWith(Root))
+                        if (key.Equals(FusionConstants.RootNamespace))
                         {
-                            ProjectFile.Includes.Add($"-I{key.Replace(Root, "")}");
+                            ProjectFile.Includes.Add(
+                                $"-I{key.Replace(FusionConstants.RootNamespace, "")}");
                         }
                         else
                         {

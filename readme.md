@@ -1,4 +1,4 @@
-# Fusion Build Tool Server
+# Fusion Build Tool
 
 Fusion is a build tool that uses the ATOMIC DSL.
 
@@ -6,8 +6,6 @@ You need `dotnet 9` and `LLVM` installed to use this!
 
 ### Usage
 Define an atomic file in any directory with a `DIRS` file in the root
-
-Drop any pro
 
 ### DIRS file
 ```

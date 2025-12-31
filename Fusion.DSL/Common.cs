@@ -23,10 +23,10 @@ public class AtomicContext
         database = new(this);
     }
 
-    public AtomicMapList UseLexer(string file)
+    public static AtomicMapList UseLexer(string file)
     {
         return new AtomicLexer(
-            File.ReadAllText(file).ToCharArray(), this).Use();
+            File.ReadAllText(file).ToCharArray()).Use();
     }
 
     public ReadonlyAtomicResult UseParser(AtomicMapList maps, string file)

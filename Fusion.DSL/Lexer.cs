@@ -1,12 +1,9 @@
 using System.Text;
+using Fusion.API;
 
 namespace Fusion.DSL;
 
-public class AtomicMap(string key, string value)
-{
-    public string Key { get; } = key;
-    public string Value { get; } = value;
-}
+
 
 public class AtomicMaps
 {
@@ -24,7 +21,7 @@ public class AtomicMaps
     ];
 }
 
-public class AtomicLexer(char[] file, AtomicContext context)
+public class AtomicLexer(char[] file)
 {
     private static int Index { get; set; } = 0;
 
