@@ -25,8 +25,19 @@ public class Program
             {
                 foreach (XmlNode node in nodes)
                 {
-                    string optionName = node.InnerText;
-                    if (optionName == "CompileDatabase")
+                    bool nEnabled = true;
+
+                    if (node.Attributes != null)
+                    {
+                        XmlAttribute? enabled = node.Attributes["enabled"];
+                        if (enabled != null && enabled.Value == "0")
+                        {
+                            nEnabled = false;
+                        }
+                    }
+                    
+                    
+                    if (node.InnerText == "GenerateCommands" && nEnabled)
                     {
                         xmlOptions.GenerateCompileDatabase = true;
                     }
