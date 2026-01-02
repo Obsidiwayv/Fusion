@@ -10,23 +10,8 @@ public class AtomicFlags
 
     public void IsCurrent(string key)
     {
-        if (key == "win32")
-        {
-            Host = HostOS.Win64;
-        }
-        else if (key == "darwin")
-        {
-            Host = HostOS.Darwin;
-        }
-        else if (key == "linux")
-        {
-            Host = HostOS.Linux;
-        }
+        Console.WriteLine(key);
         if (key == "}")
-        {
-            Host = HostOS.Unknown;
-        }
-        if (key == "{")
         {
             Continue = false;
         }
@@ -36,6 +21,23 @@ public class AtomicFlags
             // parse the beginning bracket
             if (!Continue) Continue = true;
         }
+        
+        if (key == "win32 {")
+        {
+            Continue = false;
+            Host = HostOS.Win64;
+        }
+        else if (key == "darwin {")
+        {
+            Continue = false;
+            Host = HostOS.Darwin;
+        }
+        else if (key == "linux {")
+        {
+            Continue = false;
+            Host = HostOS.Linux;
+        }
+        Console.WriteLine(Continue);
     }
 
     public bool IsWindows()

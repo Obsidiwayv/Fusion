@@ -76,15 +76,15 @@ public class AtomicLexer(char[] file)
                     {
                         return file[NextIndex];
                     }
-                    if (C() != ' ' && !string.IsNullOrWhiteSpace(C().ToString()))
-                    {
-                        stringLine.Append(C());
-                    }
+                    stringLine.Append(C());
+
                     if (C() == '\n')
                     {
                         if (!string.IsNullOrWhiteSpace(stringLine.ToString()))
                         {
-                            maps.Add(new AtomicMap(stringLine.ToString(), "ARRAY_ELEMENT"));
+                            var line = stringLine.ToString();
+                            var trimmed = line.Trim();
+                            maps.Add(new AtomicMap(trimmed, "ARRAY_ELEMENT"));
                         }
                         stringLine.Clear();
                         continue;
