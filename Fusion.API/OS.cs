@@ -8,23 +8,41 @@ public enum HostOS
     Unknown
 }
 
+
 public class OS
 {
-    public static string ExecutableEXT { get; } = OperatingSystem.IsWindows()
-        ? ".exe"
-        : "";
 
-    public static string LibraryEXT { get; } = OperatingSystem.IsWindows()
-        ? ".dll"
-        : OperatingSystem.IsMacOS()
-        ? ".dylib"
-        : ".so";
+    public static string GetExecutableExtension()
+    {
+        if (GetHost() == HostOS.Win64)
+        {
+            return ".exe";
+        } else
+        {
+            // Linux or darwin
+            return "";
+        }
+    }
 
-    public static string StaticLibraryEXT { get; } = OperatingSystem.IsWindows()
-        ? ".lib" : ".a";
+    public static string SharedLibraryExtension(HostOS os) => os switch
+    {
+        HostOS.Win64 => ".dll",
+        HostOS.Darwin => ".dylib",
+        HostOS.Linux => ".so",
+        _ => FusionConstants.UnknownKey
+    };
 
-    public static string StaticLibObject { get; } = OperatingSystem.IsWindows()
-        ? ".obj" : ".o";
+    /// <returns>
+    /// [linker-file-ext, compiled-object-file-ext]
+    /// both could be {FusionConstants.UnknownKey}, if the os is unknown
+    /// </returns>
+    public static string[] PlatformStaticLinkObjects(HostOS os) => os switch
+    {
+        HostOS.Win64 => [".lib", ".obj"],
+        HostOS.Darwin => [".a", ".o"],
+        HostOS.Linux => [".a", ".o"],
+        _ => [FusionConstants.UnknownKey, FusionConstants.UnknownKey]
+    };
 
     public static bool IsUnix()
     {

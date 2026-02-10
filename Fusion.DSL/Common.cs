@@ -10,7 +10,7 @@ public class XMLOptions
 /// <summary>
 /// Class used for defining multiple atomic map lists in the project
 /// </summary>
-public class AtomicMapList : List<AtomicMap> {}
+public class AtomicTokenDict : Dictionary<AtomicTokenEnum, string> {}
 
 public class AtomicContext
 {

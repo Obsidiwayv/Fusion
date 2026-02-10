@@ -3,22 +3,47 @@ using Fusion.API;
 
 namespace Fusion.DSL;
 
-
-
-public class AtomicMaps
+public enum AtomicTokenEnum
 {
-    public static AtomicMapList Tokens { get; } = [
-        new AtomicMap("binary", "BIN"),
-        new AtomicMap("version", "VER"),
-        new AtomicMap("uses", "USE_VER"),
-        new AtomicMap("language", "LANG"),
-        new AtomicMap("define_lib", "LIBRARY"),
-        new AtomicMap("add_includes", "HDRS"),
-        new AtomicMap("add_sources", "SRCS"),
-        new AtomicMap("add_libs", "LIBS"),
-        new AtomicMap("put_assets", "ASSETS"),
-        new AtomicMap("put_flags", "FLAGS")
-    ];
+    Binary,
+    Version,
+    UseVersion,
+    Language,
+    Library,
+    Headers,
+    Sources,
+    Libs,
+    Assets,
+    Flags,
+    ArrayElement,
+    Quote,
+}
+
+        // new(AtomicTokenListEnum.Binary, "binary"),
+        // new("version"),
+        // new("uses"),
+        // new("language"),
+        // new("define_lib"),
+        // new("add_includes"),
+        // new("add_sources"),
+        // new("add_libs"),
+        // new("put_assets"),
+        // new("put_flags")
+
+public class AtomicTokens
+{
+    public static AtomicTokenDict Map { get; } = new()
+    {
+        {AtomicTokenEnum.Binary, "binary"},
+        {AtomicTokenEnum.Version, "version"},
+        {AtomicTokenEnum.Language, "language"},
+        {AtomicTokenEnum.Language, "define_lib"},
+        {AtomicTokenEnum.Headers, "add_includes"},
+        {AtomicTokenEnum.Sources, "add_sources"},
+        {AtomicTokenEnum.Libs, "add_libs"},
+        {AtomicTokenEnum.Assets, "put_assets"},
+        {AtomicTokenEnum.Flags, "put_flags"}
+    };
 }
 
 public class AtomicLexer(char[] file)
