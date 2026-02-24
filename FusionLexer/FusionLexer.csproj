@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fusion.API\Fusion.API.csproj" />
+    <ProjectReference Include="../FusionAPI/FusionAPI.csproj" />
   </ItemGroup>
 
 </Project>

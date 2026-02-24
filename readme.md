@@ -19,35 +19,32 @@ you can name the file this: `example.build.atomic`, `example.atomic` or anything
 `.atomic` at the end
 
 ### .atomic specs
-`define_lib` can be omitted for a regular executable
 ```
-binary "program"
-version "0.1"
-uses "0.1"
-language "c++:19"
-define_lib "static"
-add_includes (
-    Include
-    Another_Include
-)
-add_sources (
-    main.cc
-    example.cc
-)
-add_libs (
-    win32:Deps/GLFW3.lib
-    darwin:Deps/GLFW3.a
-)
-put_assets (
-    img/1.png
-    img/2.png
-)
-put_flags (
-    win32 {
-        -Wl,/SUBSYSTEM,Win32
+binary "binary_name" {
+    type = executable
+    includes {
+        "Public"
+        "Private"
     }
-    darwin {
-        -flags
-    }
-)
+}
 ```
+
+### Atomic file DNA
+```
+binary
+"binary_name" - Name of the binary
+{} - start end bin/lib block
+type = executable/shared_library/static_library
+includes {} - I know this looks confusing but this bracket is also an array
+```
+
+
+### 3rd/1st party libraries
+Directories with os names contain their own link and runtime files
+
+LibraryDir 
+    | Macos
+    | Linux
+    | Win64
+    | Include
+        | LibraryName

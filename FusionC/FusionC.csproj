@@ -2,15 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <OutputPath>../Bin</OutputPath>
+    <AssemblyName>fusionc</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>fusionc</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fusion.API\Fusion.API.csproj" />
-    <ProjectReference Include="..\Fusion.DSL\Fusion.DSL.csproj" />
+    <ProjectReference Include="../FusionAPI/FusionAPI.csproj" />
+    <ProjectReference Include="../FusionLexer/FusionLexer.csproj" />
   </ItemGroup>
 
 </Project>
